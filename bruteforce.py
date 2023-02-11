@@ -1,12 +1,18 @@
+#mymodule.py
+import sys, getopt
 import subprocess
 import time
 import threading
 
 # lockcode = "00000000000000000000000000000000"
 # maxlockcode="340282366920938463463374607431768211455"
- 
+
+def func(args):
+    return args
+
 def crack_lock(low, high):
-    for i in range(low, high):
+    print(f"Cracking with {low} and {high}!")
+    for i in range(low, high+1):
         completed = 0
         while completed == 0:
             # HEX-ifies the string
@@ -28,34 +34,44 @@ def crack_lock(low, high):
                 f = open(f"{lockcode}.txt", "a")
                 f.write(lockcode+"\n"+process)
                 f.close()
- 
- 
-if __name__ =="__main__":
-    t1 = threading.Thread(target=crack_lock, args=(30000,40000))
-    t2 = threading.Thread(target=crack_lock, args=(40000,50000))
-    t3 = threading.Thread(target=crack_lock, args=(50000,60000))
-    t4 = threading.Thread(target=crack_lock, args=(60000,70000))
-    t5 = threading.Thread(target=crack_lock, args=(70000,80000))
-    t6 = threading.Thread(target=crack_lock, args=(80000,90000))
-    t7 = threading.Thread(target=crack_lock, args=(90000,100000))
-    t8 = threading.Thread(target=crack_lock, args=(100000,110000))
 
-    t1.start()
-    t2.start()
-    t3.start()
-    t4.start()
-    t5.start()
-    t6.start()
-    t7.start()
-    t8.start()
- 
-    t1.join()
-    t2.join()
-    t3.join()
-    t4.join()
-    t5.join()
-    t6.join()
-    t7.join()
-    t8.join()
+def main(argv):
+    start=0
+    end=0
+    threads=0
+
+    opts, args = getopt.getopt(argv,"t:s:e:")
+    for opt, arg in opts:
+        if opt == '-t':
+            threads = int(arg)
+        elif opt == '-s':
+            start = int(arg)
+        elif opt == '-e':
+            end = int(arg)
+
+    difference = end - start
+    
+    if difference%threads != 0:
+        print("The difference must be divisable by threads! Exiting!")
+        sys.exit()
+    slices = difference//threads-1
+
+
+
+    for i in range(threads):
+        
+        if i == threads-1:
+            end = start+slices+1
+        else:
+            end = start+slices
+
+
+        t = threading.Thread(target=crack_lock, args=(start,end))
+        t.start()
+        start = end+1
+
  
     print("Done!")
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
