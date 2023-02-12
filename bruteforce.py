@@ -1,4 +1,3 @@
-# mymodule.py
 import sys, getopt
 import subprocess
 import time
