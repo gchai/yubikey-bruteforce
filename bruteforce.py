@@ -36,7 +36,7 @@ def crack_lock(low, high):
                 if "ERROR" not in process.stderr:
                     print(f"Complete with {lockcode}!")
                     f = open(f"{lockcode}.txt", "a")
-                    f.write(lockcode + "\n" + process)
+                    f.write(lockcode + "\n" + str(process))
                     f.close()
             else:
                 print(f"TOO FAST, retrying {lockcode}")
